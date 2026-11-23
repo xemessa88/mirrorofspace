@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مرآة الفضاء | Space Mirror - Lana Hosameddin</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Google Fonts: Cairo & Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0b132b;
+      --bg-card: #1c2541;
+      --cyan-glow: #5bc0be;
+      --emerald-ok: #56c596;
+      --gold-warm: #f5b041;
+    }
+
+    body {
+      background: radial-gradient(circle at 15% 15%, #1c2541 0%, #0b132b 55%, #060a17 100%);
+      color: #f1f5f9;
+      font-family: 'Cairo', 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    html[lang="en"] body {
+      font-family: 'Inter', 'Cairo', sans-serif;
+    }
+
+    .glass-card {
+      background: rgba(28, 37, 65, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(91, 192, 190, 0.22);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(91, 192, 190, 0.45);
+    }
+
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
+      direction: ltr;
+      text-align: left;
+    }
+
+    @keyframes floatHand {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(4deg); }
+    }
+
+    .animate-hand {
+      animation: floatHand 2.4s ease-in-out infinite;
+    }
+
+    .star-bg {
+      background-image:
+        radial-gradient(1.5px 1.5px at 20px 30px, rgba(255,255,255,0.45), transparent),
+        radial-gradient(1.5px 1.5px at 90px 140px, rgba(91,192,190,0.5), transparent),
+        radial-gradient(2px 2px at 180px 80px, rgba(245,176,65,0.45), transparent),
+        radial-gradient(1.5px 1.5px at 280px 190px, rgba(255,255,255,0.35), transparent);
+      background-size: 320px 240px;
+    }
+  </style>
+</head>
+<body class="star-bg min-h-screen flex flex-col">
+
+  <!-- Toast Notification (Replaces alert) -->
+  <div id="toastBox" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden px-5 py-3 rounded-2xl bg-[#1c2541] border border-[#56c596] text-white text-sm font-semibold shadow-2xl transition-all">
+    <span id="toastText"></span>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 glass-card border-x-0 border-t-0 rounded-none">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5bc0be] to-[#3a506b] flex items-center justify-center text-[#0b132b] font-extrabold text-lg shadow-lg">
+          ✦
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold text-white leading-tight" data-ar="مرآة الفضاء" data-en="Space Mirror">مرآة الفضاء</h1>
+          <p class="text-xs text-[#5bc0be] font-semibold"><span data-ar="لانا حسام الدين" data-en="Lana Hosameddin">لانا حسام الدين</span></p>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-5 text-sm text-slate-300">
+        <a href="#overview" class="hover:text-[#5bc0be] transition" data-ar="الفكرة" data-en="Overview">الفكرة</a>
+        <a href="#architecture" class="hover:text-[#5bc0be] transition" data-ar="المكونات" data-en="Hardware & Software">المكونات</a>
+        <a href="#simulator" class="hover:text-[#5bc0be] transition" data-ar="التحكم والمحاكاة" data-en="Web BLE Simulator">التحكم والمحاكاة</a>
+        <a href="#references" class="hover:text-[#5bc0be] transition" data-ar="المصادر" data-en="References">المصادر</a>
+        <a href="#contact" class="hover:text-[#5bc0be] transition" data-ar="التواصل" data-en="Contact">التواصل</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button id="langToggleBtn" class="px-3.5 py-2 rounded-xl bg-[#0b132b] hover:bg-[#3a506b]/50 border border-[#5bc0be]/40 text-xs sm:text-sm font-bold text-[#5bc0be] transition">
+          English
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8 space-y-12">
+
+    <!-- Hero & Concise Overview -->
+    <section id="overview" class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-5">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#5bc0be]/15 border border-[#5bc0be]/30 text-[#5bc0be] text-xs font-bold">
+            <span>SAIF 2026</span>
+            <span>•</span>
+            <span data-ar="علوم الفضاء والوعي البيئي للجميع" data-en="Space Science & Eco-Awareness for All">علوم الفضاء والوعي البيئي للجميع</span>
+          </div>
+
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-white leading-snug"
+              data-ar="جهاز توعوي تفاعلي بعلوم الفضاء والبيئة يدعم الذكاء الاصطناعي ولغة الإشارة وحساس الرمش"
+              data-en="Interactive Space & Environment Awareness Device with AI, Sign Language & IR Blink Control">
+            جهاز توعوي تفاعلي بعلوم الفضاء والبيئة يدعم الذكاء الاصطناعي ولغة الإشارة وحساس الرمش
+          </h2>
+
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed"
+             data-ar="يجمع مشروع «مرآة الفضاء» بين العلم والتقنية والفن؛ حيث صُمم بهيكل فخاري مرسوم يدوياً ويعمل بمعالج ESP32 وشاشة لمس، ليقدّم تجربة تفاعلية شاملة للأطفال والكبار وكبار السن والصم وغير الناطقين عبر 4 لغات إشارة عالمية، والتحكم باللمس أو الأزرار أو رمشات العين."
+             data-en="Space Mirror blends science, technology, and art inside a hand-painted pottery clay case powered by ESP32 and a TFT touch-screen. It delivers an inclusive educational experience for kids, adults, elders, and deaf/non-verbal individuals using 4 sign languages, AI assistance, touch, buttons, and IR eye-blink control.">
+            يجمع مشروع «مرآة الفضاء» بين العلم والتقنية والفن؛ حيث صُمم بهيكل فخاري مرسوم يدوياً ويعمل بمعالج ESP32 وشاشة لمس، ليقدّم تجربة تفاعلية شاملة للأطفال والكبار وكبار السن والصم وغير الناطقين عبر 4 لغات إشارة عالمية، والتحكم باللمس أو الأزرار أو رمشات العين.
+          </p>
+
+          <!-- WHO & WFD Accessibility Impact Pills -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div class="rounded-2xl bg-[#0b132b]/80 border border-slate-700/70 p-3.5">
+              <div class="text-xl font-extrabold text-[#f5b041]">+430M</div>
+              <div class="text-xs text-slate-300 mt-1" data-ar="شخص حول العالم يعانون من فقدان السمع (WHO)" data-en="People globally with disabling hearing loss (WHO)">شخص حول العالم يعانون من فقدان السمع (WHO)</div>
+            </div>
+            <div class="rounded-2xl bg-[#0b132b]/80 border border-slate-700/70 p-3.5">
+              <div class="text-xl font-extrabold text-[#5bc0be]">+70M</div>
+              <div class="text-xs text-slate-300 mt-1" data-ar="من الصم وغير الناطقين عالمياً (WFD)" data-en="Deaf & non-verbal individuals globally (WFD)">من الصم وغير الناطقين عالمياً (WFD)</div>
+            </div>
+            <div class="rounded-2xl bg-[#0b132b]/80 border border-slate-700/70 p-3.5">
+              <div class="text-xl font-extrabold text-[#56c596]">4 Sign Langs</div>
+              <div class="text-xs text-slate-300 mt-1" data-ar="ASL • UASL • BSL • ISL + تحكم بالرمش" data-en="ASL • UASL • BSL • ISL + IR Blink Control">ASL • UASL • BSL • ISL + تحكم بالرمش</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Device Summary Card -->
+        <div class="lg:col-span-5">
+          <div class="rounded-3xl bg-[#0b132b]/90 border border-[#5bc0be]/30 p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-[#f5b041]" data-ar="المبتكرة: لانا حسام الدين" data-en="Student: Lana Hosameddin">المبتكرة: لانا حسام الدين</span>
+              <span class="px-2.5 py-1 rounded-lg bg-[#56c596]/15 text-[#56c596] text-xs font-bold">ESP32 + BLE + IR</span>
+            </div>
+
+            <!-- 4 Sign Language Hands Showcase -->
+            <div class="grid grid-cols-4 gap-2 text-center">
+              <div class="rounded-xl bg-[#1c2541] p-2.5 border border-[#5bc0be]/30">
+                <div class="text-2xl animate-hand">🤟</div>
+                <div class="text-[11px] font-bold text-[#f5b041] mt-1">ASL</div>
+              </div>
+              <div class="rounded-xl bg-[#1c2541] p-2.5 border border-[#5bc0be]/30">
+                <div class="text-2xl animate-hand" style="animation-delay:0.3s">✋</div>
+                <div class="text-[11px] font-bold text-[#5bc0be] mt-1">UASL</div>
+              </div>
+              <div class="rounded-xl bg-[#1c2541] p-2.5 border border-[#5bc0be]/30">
+                <div class="text-2xl animate-hand" style="animation-delay:0.6s">👋</div>
+                <div class="text-[11px] font-bold text-[#56c596] mt-1">BSL</div>
+              </div>
+              <div class="rounded-xl bg-[#1c2541] p-2.5 border border-[#5bc0be]/30">
+                <div class="text-2xl animate-hand" style="animation-delay:0.9s">🖐️</div>
+                <div class="text-[11px] font-bold text-slate-200 mt-1">ISL</div>
+              </div>
+            </div>
+
+            <div class="space-y-2 text-xs text-slate-300 bg-[#1c2541]/60 rounded-2xl p-3.5">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400" data-ar="الشخصيات التفاعلية:" data-en="Characters:">الشخصيات التفاعلية:</span>
+                <span class="font-bold text-white" data-ar="أرورا (كاجوال) & ليث (كلاسيكي)" data-en="Aurora (Casual) & Layth (Classic)">أرورا (كاجوال) & ليث (كلاسيكي)</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400" data-ar="المسارات التعليمية:" data-en="Missions:">المسارات التعليمية:</span>
+                <span class="font-bold text-[#5bc0be]" data-ar="ثقب الأوزون & الحطام المداري" data-en="Ozone Hole & Orbital Debris">ثقب الأوزون & الحطام المداري</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400" data-ar="الهيكل الخارجي:" data-en="Enclosure:">الهيكل الخارجي:</span>
+                <span class="font-bold text-[#f5b041]" data-ar="طين فخاري مرسوم يدوياً" data-en="Hand-painted Pottery Clay">طين فخاري مرسوم يدوياً</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hardware & Software Architecture -->
+    <section id="architecture" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl sm:text-2xl font-extrabold text-white" data-ar="معمارية الجهاز (العتاد والبرمجيات)" data-en="Hardware & Software Architecture">معمارية الجهاز (العتاد والبرمجيات)</h3>
+        <span class="text-xs text-[#5bc0be] font-semibold" data-ar="من البوستر العلمي" data-en="Poster Methodology">من البوستر العلمي</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Hardware Card -->
+        <div class="glass-card rounded-3xl p-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-xl bg-[#f5b041]/20 text-[#f5b041] flex items-center justify-center font-bold">⚙️</span>
+            <h4 class="text-lg font-bold text-white" data-ar="مكونات العتاد (Hardware)" data-en="Hardware Components">مكونات العتاد (Hardware)</h4>
+          </div>
+          <div class="grid grid-cols-2 gap-2.5 text-xs sm:text-sm">
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#5bc0be]">ESP32</div>
+              <div class="text-slate-400 text-xs" data-ar="معالج يدعم Wi-Fi و Bluetooth" data-en="Wi-Fi & Bluetooth MCU">معالج يدعم Wi-Fi و Bluetooth</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#5bc0be]">TFT Touch-Screen</div>
+              <div class="text-slate-400 text-xs" data-ar="شاشة لمس 480×320 ملونة" data-en="480×320 Color Touch Display">شاشة لمس 480×320 ملونة</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#56c596]">IR Blink Sensor</div>
+              <div class="text-slate-400 text-xs" data-ar="حساس أشعة للتحكم برمش العين" data-en="Eye-blink interaction sensor">حساس أشعة للتحكم برمش العين</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#56c596]">Buzzer & Buttons</div>
+              <div class="text-slate-400 text-xs" data-ar="تنبيهات صوتية وأزرار تحكم" data-en="Audio feedback & tactile keys">تنبيهات صوتية وأزرار تحكم</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#f5b041]">Pottery Clay Case</div>
+              <div class="text-slate-400 text-xs" data-ar="هيكل فخاري مرسوم يدوياً" data-en="Hand-painted ceramic/clay body">هيكل فخاري مرسوم يدوياً</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#f5b041]">Power Bank & Wires</div>
+              <div class="text-slate-400 text-xs" data-ar="تغذية محمولة وأسلاك توصيل" data-en="Portable power & jumper wires">تغذية محمولة وأسلاك توصيل</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Software Card -->
+        <div class="glass-card rounded-3xl p-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-xl bg-[#5bc0be]/20 text-[#5bc0be] flex items-center justify-center font-bold">💻</span>
+            <h4 class="text-lg font-bold text-white" data-ar="البرمجيات والذكاء الاصطناعي (Software)" data-en="Software & AI Stack">البرمجيات والذكاء الاصطناعي (Software)</h4>
+          </div>
+          <div class="grid grid-cols-2 gap-2.5 text-xs sm:text-sm">
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#5bc0be]">C++ (ESP32)</div>
+              <div class="text-slate-400 text-xs" data-ar="نظام الألعاب والرسوم ولغة الإشارة" data-en="Game engine, UI & sign gestures">نظام الألعاب والرسوم ولغة الإشارة</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#5bc0be]">Python & AI</div>
+              <div class="text-slate-400 text-xs" data-ar="ذكاء اصطناعي للمعلومات العلمية" data-en="AI science knowledge engine">ذكاء اصطناعي للمعلومات العلمية</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#56c596]">HTML / Web BLE</div>
+              <div class="text-slate-400 text-xs" data-ar="صفحة ويب للتحكم بالجهاز بلوتوث" data-en="Browser Bluetooth control panel">صفحة ويب للتحكم بالجهاز بلوتوث</div>
+            </div>
+            <div class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800">
+              <div class="font-bold text-[#f5b041]">Accessible UI</div>
+              <div class="text-slate-400 text-xs" data-ar="واجهة ثنائية اللغة لجميع الفئات" data-en="Bilingual inclusive interface">واجهة ثنائية اللغة لجميع الفئات</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Web Bluetooth & Device Simulator -->
+    <section id="simulator" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700/70 pb-4">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-extrabold text-white" data-ar="لوحة التحكم بالبلوتوث ومحاكاة الجهاز" data-en="Web Bluetooth Controller & Device Simulator">لوحة التحكم بالبلوتوث ومحاكاة الجهاز</h3>
+          <p class="text-xs sm:text-sm text-slate-300 mt-1" data-ar="جرّب التحكم بالمسارات أو اربط متصفحك مباشرة مع شريحة ESP32 عبر Bluetooth" data-en="Test missions virtually or connect directly to your ESP32 via Web Bluetooth">جرّب التحكم بالمسارات أو اربط متصفحك مباشرة مع شريحة ESP32 عبر Bluetooth</p>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <span id="bleStatusBadge" class="px-3 py-1.5 rounded-xl bg-[#f5b041]/15 border border-[#f5b041]/40 text-[#f5b041] text-xs font-bold"
+                data-ar="وضع المحاكاة (Demo)" data-en="Demo Simulator Mode">
+            وضع المحاكاة (Demo)
+          </span>
+          <button id="bleConnectBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#5bc0be] to-[#56c596] text-[#0b132b] font-extrabold text-xs sm:text-sm shadow-lg hover:opacity-95 transition"
+                  data-ar="اتصال Bluetooth" data-en="Connect Bluetooth">
+            اتصال Bluetooth
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Virtual TFT 480x320 Screen Preview -->
+        <div class="lg:col-span-7 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex gap-2">
+              <button id="modeOzoneBtn" class="px-3 py-1.5 rounded-xl bg-[#5bc0be] text-[#0b132b] text-xs font-extrabold transition"
+                      data-ar="١. علاج ثقب الأوزون" data-en="1. Ozone Hole Cure">
+                ١. علاج ثقب الأوزون
+              </button>
+              <button id="modeDebrisBtn" class="px-3 py-1.5 rounded-xl bg-[#0b132b] text-slate-300 border border-slate-700 text-xs font-bold transition"
+                      data-ar="٢. الحطام المداري" data-en="2. Orbital Debris">
+                ٢. الحطام المداري
+              </button>
+            </div>
+
+            <select id="signSelect" class="px-3 py-1.5 rounded-xl bg-[#0b132b] border border-[#5bc0be]/40 text-xs font-bold text-[#5bc0be] outline-none">
+              <option value="ASL">Sign: ASL (American)</option>
+              <option value="UASL">Sign: UASL (العربية الموحدة)</option>
+              <option value="BSL">Sign: BSL (British)</option>
+              <option value="ISL">Sign: ISL (International)</option>
+            </select>
+          </div>
+
+          <!-- Simulated TFT Screen -->
+          <div id="simScreen" class="rounded-2xl bg-[#0b132b] border-2 border-[#5bc0be]/50 p-4 space-y-3 shadow-inner">
+            <div class="flex items-center justify-between text-[11px] bg-[#1c2541] px-3 py-1.5 rounded-lg">
+              <span class="text-[#f5b041] font-bold">Creator: Lana Hosameddin</span>
+              <span id="simIrPill" class="text-[#56c596] font-bold">IR Sensor: ON (Blinks: 0/3)</span>
+            </div>
+
+            <div id="simBanner" class="text-center text-xs sm:text-sm font-bold text-white bg-[#1c2541]/90 py-2 px-3 rounded-xl border border-[#5bc0be]/30">
+              ثقب الأوزون والأشعة فوق البنفسجية الضارة — أطفئ مصانع CFC
+            </div>
+
+            <!-- Visual Stage Box -->
+            <div id="simCanvasArea" class="h-44 rounded-xl bg-gradient-to-b from-sky-600/40 to-sky-900/40 border border-slate-700 relative overflow-hidden p-3 flex flex-col justify-between">
+              <!-- Top Sky Layer -->
+              <div id="simSkyRow" class="flex items-center justify-center gap-3">
+                <span class="px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400 text-rose-200 text-xs font-bold" id="simTopStatus">
+                  ⚠️ ثقب الأوزون: 100% | أشعة UV ضارة
+                </span>
+              </div>
+
+              <!-- Middle Entities -->
+              <div id="simMidRow" class="flex items-center justify-around text-center my-auto">
+                <div class="p-2 rounded-xl bg-[#0b132b]/80 border border-rose-400/50 text-xs" id="entity1">🏭 مصنع CFC 1</div>
+                <div class="p-2 rounded-xl bg-[#0b132b]/80 border border-rose-400/50 text-xs" id="entity2">🏭 مصنع CFC 2</div>
+                <div class="p-2 rounded-xl bg-[#0b132b]/80 border border-emerald-400/50 text-xs" id="entity3">🌱 حوض زراعة</div>
+              </div>
+
+              <!-- Ground & Hero -->
+              <div dir="ltr" class="relative h-8 bg-emerald-700/60 rounded-lg border-t-2 border-emerald-400 flex items-center px-2">
+                <div id="simHeroMarker" class="transition-all duration-200 px-2.5 py-0.5 rounded-md bg-[#f5b041] text-[#0b132b] text-xs font-extrabold" style="margin-left: 15%;">
+                  🧑‍🚀 <span data-ar="أرورا" data-en="Aurora">أرورا</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Sign Hand + Status -->
+            <div class="flex items-center justify-between gap-3 bg-[#1c2541] p-2.5 rounded-xl">
+              <div class="flex items-center gap-2.5">
+                <div id="simSignEmoji" class="w-10 h-10 rounded-lg bg-[#0b132b] border border-[#5bc0be] flex items-center justify-center text-xl animate-hand">✋</div>
+                <div>
+                  <div id="simSignTitle" class="text-xs font-bold text-[#f5b041]">ASL — إشارة التوقف / التنفيذ</div>
+                  <div id="simSignHint" class="text-[11px] text-slate-300">اليد التوضيحية ترافق كل خطوة</div>
+                </div>
+              </div>
+              <span id="simStepBadge" class="px-2.5 py-1 rounded-lg bg-[#56c596]/20 text-[#56c596] text-xs font-bold">المرحلة 1/3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control Pad (Mirrors Physical Buttons + IR Blink) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="rounded-2xl bg-[#0b132b]/85 border border-slate-800 p-4 space-y-3">
+            <h4 class="text-sm font-extrabold text-white" data-ar="أزرار التحكم المباشر (لمس / أزرار / بلوتوث)" data-en="Direct Controls (Touch / Buttons / BLE)">أزرار التحكم المباشر (لمس / أزرار / بلوتوث)</h4>
+            <div dir="ltr" class="grid grid-cols-3 gap-2.5">
+              <button id="ctrlLeftBtn" class="p-3.5 rounded-xl bg-[#1c2541] hover:bg-[#3a506b] border border-[#5bc0be]/40 text-white font-extrabold text-sm transition"
+                      data-ar="◀ يسار" data-en="◀ Left">
+                ◀ يسار
+              </button>
+              <button id="ctrlRightBtn" class="p-3.5 rounded-xl bg-[#1c2541] hover:bg-[#3a506b] border border-[#5bc0be]/40 text-white font-extrabold text-sm transition"
+                      data-ar="يمين ▶" data-en="Right ▶">
+                يمين ▶
+              </button>
+              <button id="ctrlDoBtn" class="p-3.5 rounded-xl bg-[#56c596] hover:opacity-90 text-[#0b132b] font-extrabold text-sm transition"
+                      data-ar="⚡ تنفيذ" data-en="⚡ Execute">
+                ⚡ تنفيذ
+              </button>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-[#0b132b]/85 border border-slate-800 p-4 space-y-3">
+            <h4 class="text-sm font-extrabold text-[#f5b041]" data-ar="محاكاة حساس الرمش (IR Sensor)" data-en="IR Eye-Blink Sensor Simulation">محاكاة حساس الرمش (IR Sensor)</h4>
+            <p class="text-xs text-slate-300" data-ar="في الجهاز الحقيقي: 3 رمشات خلال 10 ثوانٍ تنفّذ الإجراء تلقائياً لذوي الإعاقة الحركية وغير الناطقين." data-en="On hardware: 3 eye blinks within 10s automatically trigger the action for accessible hands-free control.">
+              في الجهاز الحقيقي: 3 رمشات خلال 10 ثوانٍ تنفّذ الإجراء تلقائياً لذوي الإعاقة الحركية وغير الناطقين.
+            </p>
+            <button id="ctrlBlinkBtn" class="w-full py-3 px-4 rounded-xl bg-[#f5b041]/20 hover:bg-[#f5b041]/30 border border-[#f5b041] text-[#f5b041] font-extrabold text-xs sm:text-sm transition"
+                    data-ar="👁️ محاكاة رمشة عين (اضغط 3 مرات للتنفيذ)" data-en="👁️ Simulate Eye Blink (Click 3x to Execute)">
+              👁️ محاكاة رمشة عين (اضغط 3 مرات للتنفيذ)
+            </button>
+          </div>
+
+          <button id="resetSimBtn" class="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-xs font-bold transition"
+                  data-ar="إعادة ضبط المرحلة" data-en="Reset Stage">
+            إعادة ضبط المرحلة
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sign Language & Scientific References -->
+    <section id="references" class="space-y-4">
+      <h3 class="text-xl sm:text-2xl font-extrabold text-white" data-ar="مصادر لغة الإشارة والمراجع العلمية" data-en="Sign Language & Scientific References">مصادر لغة الإشارة والمراجع العلمية</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Sign Language Resources -->
+        <div class="glass-card rounded-3xl p-6 space-y-3">
+          <h4 class="text-lg font-bold text-[#5bc0be]" data-ar="🤟 مصادر ومعايير لغة الإشارة والوصول الشامل" data-en="🤟 Sign Language & Accessibility Standards">🤟 مصادر ومعايير لغة الإشارة والوصول الشامل</h4>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-200">
+            <li class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-white">World Federation of the Deaf (WFD)</div>
+                <div class="text-slate-400 text-xs" data-ar="الاتحاد العالمي للصم — إحصاءات ومعايير لغات الإشارة" data-en="Global deaf statistics & sign language rights">الاتحاد العالمي للصم — إحصاءات ومعايير لغات الإشارة</div>
+              </div>
+              <a href="https://wfdeaf.org" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-[#5bc0be]/20 text-[#5bc0be] text-xs font-bold shrink-0">wfdeaf.org</a>
+            </li>
+            <li class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-white">UASL — لغة الإشارة العربية الموحدة</div>
+                <div class="text-slate-400 text-xs" data-ar="القاموس الإشاري العربي الموحد للصم (جامعة الدول العربية)" data-en="Unified Arabic Sign Language Dictionary">القاموس الإشاري العربي الموحد للصم (جامعة الدول العربية)</div>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-[#56c596]/20 text-[#56c596] text-xs font-bold shrink-0">UASL</span>
+            </li>
+            <li class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-white">ASL &amp; BSL Dictionaries (NIDCD / British Deaf Assoc.)</div>
+                <div class="text-slate-400 text-xs" data-ar="معايير لغة الإشارة الأمريكية (ASL) والبريطانية (BSL)" data-en="American & British Sign Language Standards">معايير لغة الإشارة الأمريكية (ASL) والبريطانية (BSL)</div>
+              </div>
+              <a href="https://www.nidcd.nih.gov/health/american-sign-language" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-[#5bc0be]/20 text-[#5bc0be] text-xs font-bold shrink-0">NIDCD</a>
+            </li>
+            <li class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-white">International Sign (ISL) &amp; WHO Hearing Report</div>
+                <div class="text-slate-400 text-xs" data-ar="لغة الإشارة الدولية وتقرير منظمة الصحة العالمية للسمع" data-en="International Sign & WHO World Report on Hearing">لغة الإشارة الدولية وتقرير منظمة الصحة العالمية للسمع</div>
+              </div>
+              <a href="https://www.who.int/health-topics/hearing-loss" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-[#5bc0be]/20 text-[#5bc0be] text-xs font-bold shrink-0">WHO</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Space & Environment References -->
+        <div class="glass-card rounded-3xl p-6 space-y-3">
+          <h4 class="text-lg font-bold text-[#f5b041]" data-ar="🛰️ مراجع علوم الفضاء والبيئة (من البوستر)" data-en="🛰️ Space & Environment References (Poster)">🛰️ مراجع علوم الفضاء والبيئة (من البوستر)</h4>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-slate-200">
+            <li class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-white">1. Saudi Space Agency (SSA) — وكالة الفضاء السعودية</div>
+                <div class="text-slate-400 text-xs" data-ar="برامج التوعية الفضائية واستدامة المدار" data-en="Space awareness & orbital sustainability programs">برامج التوعية الفضائية واستدامة المدار</div>
+              </div>
+              <a href="https://ssa.gov.sa" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-[#f5b041]/20 text-[#f5b041] text-xs font-bold shrink-0">ssa.gov.sa</a>
+            </li>
+            <li class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-white">2. European Space Agency (ESA) — وكالة الفضاء الأوروبية</div>
+                <div class="text-slate-400 text-xs" data-ar="بيانات الحطام المداري ومراقبة طبقة الأوزون" data-en="Space debris tracking & ozone layer monitoring">بيانات الحطام المداري ومراقبة طبقة الأوزون</div>
+              </div>
+              <a href="https://www.esa.int" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-[#f5b041]/20 text-[#f5b041] text-xs font-bold shrink-0">esa.int</a>
+            </li>
+            <li class="p-3 rounded-xl bg-[#0b132b]/75 border border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <div class="font-bold text-white">3. NASA — الإدارة الوطنية للملاحة الجوية والفضاء</div>
+                <div class="text-slate-400 text-xs" data-ar="مراقبة ثقب الأوزون والأشعة فوق البنفسجية والمناخ" data-en="Ozone Watch, UV radiation & Earth science">مراقبة ثقب الأوزون والأشعة فوق البنفسجية والمناخ</div>
+              </div>
+              <a href="https://ozonewatch.gsfc.nasa.gov" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-[#f5b041]/20 text-[#f5b041] text-xs font-bold shrink-0">nasa.gov</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Future Work & Direct Contact -->
+    <footer id="contact" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-span-6 space-y-2">
+          <h3 class="text-xl font-extrabold text-white" data-ar="التطوير المستقبلي (Future Work)" data-en="Future Work">التطوير المستقبلي (Future Work)</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed"
+             data-ar="إضافة بطارية ليثيوم مدمجة مع دائرة شحن، وتوسيع ذاكرة RAM لأداء رسومي أسرع، وتطوير جودة البرمجيات والذكاء الاصطناعي لتوسيع سهولة الوصول."
+             data-en="Integrating a built-in lithium battery with a charging circuit, expanding RAM for smoother graphics, and enhancing AI & software accessibility.">
+            إضافة بطارية ليثيوم مدمجة مع دائرة شحن، وتوسيع ذاكرة RAM لأداء رسومي أسرع، وتطوير جودة البرمجيات والذكاء الاصطناعي لتوسيع سهولة الوصول.
+          </p>
+        </div>
+
+        <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Email Card -->
+          <div class="rounded-2xl bg-[#0b132b]/90 border border-[#5bc0be]/40 p-4 flex flex-col justify-between gap-3">
+            <div>
+              <div class="text-xs text-[#5bc0be] font-bold" data-ar="البريد الإلكتروني" data-en="Email Address">البريد الإلكتروني</div>
+              <a href="mailto:lanahosameddin@gmail.com" class="text-sm font-bold text-white hover:text-[#5bc0be] break-all">
+                lanahosameddin@gmail.com
+              </a>
+            </div>
+            <button onclick="copyText('lanahosameddin@gmail.com')" class="px-3 py-1.5 rounded-xl bg-[#1c2541] hover:bg-[#3a506b] text-xs font-bold text-[#5bc0be] transition w-fit"
+                    data-ar="نسخ الإيميل" data-en="Copy Email">
+              نسخ الإيميل
+            </button>
+          </div>
+
+          <!-- Phone / WhatsApp Card -->
+          <div class="rounded-2xl bg-[#0b132b]/90 border border-[#56c596]/40 p-4 flex flex-col justify-between gap-3">
+            <div>
+              <div class="text-xs text-[#56c596] font-bold" data-ar="رقم الجوال / واتساب" data-en="Phone / WhatsApp">رقم الجوال / واتساب</div>
+              <a href="tel:+966571307662" dir="ltr" class="text-sm font-bold text-white hover:text-[#56c596] inline-block">
+                +966571307662
+              </a>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="copyText('+966571307662')" class="px-3 py-1.5 rounded-xl bg-[#1c2541] hover:bg-[#3a506b] text-xs font-bold text-[#56c596] transition"
+                      data-ar="نسخ الرقم" data-en="Copy Number">
+                نسخ الرقم
+              </button>
+              <a href="https://wa.me/966571307662" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-[#56c596]/20 text-[#56c596] text-xs font-bold">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-4 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+        <span>© 2026 <strong class="text-white">Lana Hosameddin (لانا حسام الدين)</strong></span>
+        <span data-ar="مرآة الفضاء | Space Mirror Showcase" data-en="Space Mirror | Inclusive Science Device">مرآة الفضاء | Space Mirror Showcase</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    // --- Bilingual Toggle State ---
+    let currentLang = 'ar';
+    const langToggleBtn = document.getElementById('langToggleBtn');
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+      langToggleBtn.textContent = (lang === 'ar') ? 'English' : 'العربية';
+
+      document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        el.textContent = el.getAttribute(lang === 'ar' ? 'data-ar' : 'data-en');
+      });
+      renderSimScreen();
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
+    });
+
+    // --- Toast Helper (No alert()) ---
+    let toastTimer = null;
+    function showToast(msgAr, msgEn) {
+      const box = document.getElementById('toastBox');
+      const txt = document.getElementById('toastText');
+      txt.textContent = (currentLang === 'ar') ? msgAr : msgEn;
+      box.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => box.classList.add('hidden'), 2600);
+    }
+
+    // --- Clipboard Copy (using execCommand fallback for iFrame safety) ---
+    function copyText(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('تم النسخ: ' + text, 'Copied: ' + text);
+      } catch (e) {
+        showToast('تعذر النسخ التلقائي', 'Unable to copy');
+      }
+      document.body.removeChild(ta);
+    }
+
+    // --- Interactive Simulator & Web Bluetooth ---
+    let bleCharacteristic = null;
+    let simMode = 'ozone'; // 'ozone' | 'debris'
+    let heroPos = 15; // 5% to 75% (Left to Right in LTR)
+    let blinkCounter = 0;
+
+    // Ozone State (3 CFC plants & 3 crop plots)
+    let plantsOff = 0; // 0..3
+    let cropsDone = 0; // 0..3
+
+    // Debris State (4 craft parts & 5 shards)
+    let partsCollected = 0; // 0..4
+    let shardsCaught = 0;   // 0..5
+
+    async function sendBleCommand(cmd) {
+      if (bleCharacteristic) {
+        try {
+          const enc = new TextEncoder();
+          await bleCharacteristic.writeValue(enc.encode(cmd + '\n'));
+        } catch (err) {
+          showToast('انقطع اتصال البلوتوث، تم التحويل للمحاكاة', 'BLE disconnected, switched to Demo');
+          bleCharacteristic = null;
+        }
+      }
+    }
+
+    document.getElementById('bleConnectBtn').addEventListener('click', async () => {
+      if (!navigator.bluetooth) {
+        showToast('المتصفح لا يدعم Web Bluetooth — وضع المحاكاة يعمل بكامل المزايا', 'Web Bluetooth not supported here — Demo Simulator active');
+        return;
+      }
+      try {
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb']
+        });
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService('0000ffe0-0000-1000-8000-00805f9b34fb');
+        bleCharacteristic = await service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');
+        const badge = document.getElementById('bleStatusBadge');
+        badge.textContent = (currentLang === 'ar') ? 'متصل بـ ESP32 BLE' : 'Connected to ESP32 BLE';
+        badge.className = 'px-3 py-1.5 rounded-xl bg-[#56c596]/20 border border-[#56c596] text-[#56c596] text-xs font-bold';
+        showToast('تم الاتصال بجهاز مرآة الفضاء بنجاح!', 'Connected to Space Mirror ESP32!');
+      } catch (e) {
+        showToast('لم يتم اختيار جهاز بلوتوث — يمكنك التجربة في وضع المحاكاة', 'No BLE device selected — Demo mode ready');
+      }
+    });
+
+    function renderSimScreen() {
+      const isAr = (currentLang === 'ar');
+      const signVal = document.getElementById('signSelect').value;
+      const banner = document.getElementById('simBanner');
+      const topStatus = document.getElementById('simTopStatus');
+      const e1 = document.getElementById('entity1');
+      const e2 = document.getElementById('entity2');
+      const e3 = document.getElementById('entity3');
+      const signEmoji = document.getElementById('simSignEmoji');
+      const signTitle = document.getElementById('simSignTitle');
+      const stepBadge = document.getElementById('simStepBadge');
+      const irPill = document.getElementById('simIrPill');
+      const canvasArea = document.getElementById('simCanvasArea');
+
+      irPill.textContent = isAr
+        ? `حساس الأشعة: شغال (رمشات: ${blinkCounter}/3)`
+        : `IR Sensor: ON (Blinks: ${blinkCounter}/3)`;
+
+      document.getElementById('simHeroMarker').style.marginLeft = heroPos + '%';
+
+      if (simMode === 'ozone') {
+        canvasArea.className = 'h-44 rounded-xl bg-gradient-to-b from-sky-600/40 to-sky-900/40 border border-slate-700 relative overflow-hidden p-3 flex flex-col justify-between';
+        const holePct = Math.max(0, 100 - plantsOff * 15 - cropsDone * 19);
+        const isClosed = (plantsOff >= 3 && cropsDone >= 3);
+
+        if (isClosed) {
+          topStatus.textContent = isAr ? '✅ ثقب الأوزون مغلق والأرض محمية!' : '✅ Ozone Hole Closed & Earth Protected!';
+          topStatus.className = 'px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-200 text-xs font-bold';
+          banner.textContent = isAr ? 'مبارك! تمت الزراعة وتسكير ثقب الأوزون بنجاح' : 'Congrats! Crops planted & Ozone Hole closed!';
+          signEmoji.textContent = '🎉';
+          signTitle.textContent = `${signVal} — ${isAr ? 'إشارة الفوز والإنجاز' : 'Success & Celebration Sign'}`;
+          stepBadge.textContent = isAr ? 'مكتمل 3/3' : 'Done 3/3';
+        } else if (plantsOff < 3) {
+          topStatus.textContent = isAr ? `⚠️ ثقب الأوزون: ${holePct}% | أشعة UV ضارة` : `⚠️ Ozone Hole: ${holePct}% | Harmful UV`;
+          topStatus.className = 'px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400 text-rose-200 text-xs font-bold';
+          banner.textContent = isAr ? 'أطفئ مصانع CFC الثلاثة لوقف اتساع ثقب الأوزون' : 'Shut down all 3 CFC plants to stop ozone hole growth';
+          signEmoji.textContent = '✋';
+          signTitle.textContent = `${signVal} — ${isAr ? 'إشارة التوقف (إطفاء المصانع)' : 'Stop Sign (Shut CFC Plants)'}`;
+          stepBadge.textContent = isAr ? 'المرحلة 1/3' : 'Stage 1/3';
+        } else {
+          topStatus.textContent = isAr ? `🛡️ الثقب متوقف (${holePct}%) — ازرع لتسكيره` : `🛡️ Hole Locked (${holePct}%) — Plant to Heal`;
+          topStatus.className = 'px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400 text-amber-200 text-xs font-bold';
+          banner.textContent = isAr ? 'الثقب لن يزداد بعد الآن! اسقِ وازرع النباتات' : 'Hole will not grow anymore! Water & plant crops';
+          signEmoji.textContent = '🌱';
+          signTitle.textContent = `${signVal} — ${isAr ? 'إشارة النمو والزراعة' : 'Grow & Plant Sign'}`;
+          stepBadge.textContent = isAr ? 'المرحلة 2/3' : 'Stage 2/3';
+        }
+
+        e1.textContent = isAr ? `🏭 المصانع المطفأة: ${plantsOff}/3` : `🏭 Plants OFF: ${plantsOff}/3`;
+        e2.textContent = plantsOff >= 3 ? (isAr ? '🛡️ الانبعاثات متوقفة' : '🛡️ CFC Stopped') : (isAr ? '☁️ انبعاث CFC' : '☁️ CFC Gas');
+        e3.textContent = isAr ? `🌳 الزراعة: ${cropsDone}/3` : `🌳 Crops: ${cropsDone}/3`;
+      } else {
+        canvasArea.className = 'h-44 rounded-xl bg-gradient-to-b from-[#060a17] to-[#1c2541] border border-slate-700 relative overflow-hidden p-3 flex flex-col justify-between';
+        if (shardsCaught >= 5) {
+          topStatus.textContent = isAr ? '✅ تم صيد جميع شظايا الحطام المداري!' : '✅ All Orbital Debris Shards Caught!';
+          topStatus.className = 'px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-200 text-xs font-bold';
+          banner.textContent = isAr ? 'مبارك! المدار الفضائي آمن الآن' : 'Congrats! Earth orbit is now clean & safe';
+          signEmoji.textContent = '🎉';
+          signTitle.textContent = `${signVal} — ${isAr ? 'إشارة النجاح' : 'Victory Sign'}`;
+          stepBadge.textContent = isAr ? 'مكتمل 3/3' : 'Done 3/3';
+        } else if (partsCollected < 4) {
+          topStatus.textContent = isAr ? '🛰️ شظايا أقمار صناعية في المدار!' : '🛰️ Satellite Shards in Orbit!';
+          topStatus.className = 'px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400 text-amber-200 text-xs font-bold';
+          banner.textContent = isAr ? 'المرحلة ١: اجمع قطع المركبة الأربع والشبكة' : 'Stage 1: Collect 4 spacecraft parts & net';
+          signEmoji.textContent = '🤏';
+          signTitle.textContent = `${signVal} — ${isAr ? 'إشارة التجميع' : 'Collect Sign'}`;
+          stepBadge.textContent = isAr ? 'المرحلة 1/2' : 'Stage 1/2';
+        } else {
+          topStatus.textContent = isAr ? `🕸️ الشظايا الممسوكة: ${shardsCaught}/5` : `🕸️ Shards Caught: ${shardsCaught}/5`;
+          topStatus.className = 'px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400 text-cyan-200 text-xs font-bold';
+          banner.textContent = isAr ? 'المرحلة ٢: أطلق المركبة وامسك الشظايا بالشبكة' : 'Stage 2: Launch craft & catch shards with net';
+          signEmoji.textContent = '🚀';
+          signTitle.textContent = `${signVal} — ${isAr ? 'إشارة الإطلاق والصيد' : 'Launch & Catch Sign'}`;
+          stepBadge.textContent = isAr ? 'المرحلة 2/2' : 'Stage 2/2';
+        }
+
+        e1.textContent = isAr ? `🔩 القطع: ${partsCollected}/4` : `🔩 Parts: ${partsCollected}/4`;
+        e2.textContent = partsCollected >= 4 ? (isAr ? '🕸️ الشبكة جاهزة' : '🕸️ Net Ready') : (isAr ? '🕸️ الشبكة' : '🕸️ Capture Net');
+        e3.textContent = isAr ? `🚀 الصيد: ${shardsCaught}/5` : `🚀 Caught: ${shardsCaught}/5`;
+      }
+    }
+
+    function triggerExecute() {
+      sendBleCommand('DO');
+      if (simMode === 'ozone') {
+        if (plantsOff < 3) plantsOff++;
+        else if (cropsDone < 3) cropsDone++;
+      } else {
+        if (partsCollected < 4) partsCollected++;
+        else if (shardsCaught < 5) shardsCaught++;
+      }
+      renderSimScreen();
+    }
+
+    document.getElementById('modeOzoneBtn').addEventListener('click', () => {
+      simMode = 'ozone';
+      document.getElementById('modeOzoneBtn').className = 'px-3 py-1.5 rounded-xl bg-[#5bc0be] text-[#0b132b] text-xs font-extrabold transition';
+      document.getElementById('modeDebrisBtn').className = 'px-3 py-1.5 rounded-xl bg-[#0b132b] text-slate-300 border border-slate-700 text-xs font-bold transition';
+      sendBleCommand('MODE_OZONE');
+      renderSimScreen();
+    });
+
+    document.getElementById('modeDebrisBtn').addEventListener('click', () => {
+      simMode = 'debris';
+      document.getElementById('modeDebrisBtn').className = 'px-3 py-1.5 rounded-xl bg-[#f5b041] text-[#0b132b] text-xs font-extrabold transition';
+      document.getElementById('modeOzoneBtn').className = 'px-3 py-1.5 rounded-xl bg-[#0b132b] text-slate-300 border border-slate-700 text-xs font-bold transition';
+      sendBleCommand('MODE_DEBRIS');
+      renderSimScreen();
+    });
+
+    document.getElementById('signSelect').addEventListener('change', (e) => {
+      sendBleCommand('SIGN_' + e.target.value);
+      renderSimScreen();
+    });
+
+    document.getElementById('ctrlLeftBtn').addEventListener('click', () => {
+      heroPos = Math.max(4, heroPos - 14);
+      sendBleCommand('LEFT');
+      renderSimScreen();
+    });
+
+    document.getElementById('ctrlRightBtn').addEventListener('click', () => {
+      heroPos = Math.min(76, heroPos + 14);
+      sendBleCommand('RIGHT');
+      renderSimScreen();
+    });
+
+    document.getElementById('ctrlDoBtn').addEventListener('click', triggerExecute);
+
+    document.getElementById('ctrlBlinkBtn').addEventListener('click', () => {
+      blinkCounter++;
+      if (blinkCounter >= 3) {
+        blinkCounter = 0;
+        showToast('تم رصد 3 رمشات! تم تنفيذ الإجراء', '3 Eye Blinks Detected! Action Executed');
+        triggerExecute();
+      } else {
+        renderSimScreen();
+      }
+    });
+
+    document.getElementById('resetSimBtn').addEventListener('click', () => {
+      plantsOff = 0; cropsDone = 0;
+      partsCollected = 0; shardsCaught = 0;
+      blinkCounter = 0; heroPos = 15;
+      renderSimScreen();
+    });
+
+    // Initialize default Arabic view
+    applyLanguage('ar');
+  </script>
+</body>
+</html>
